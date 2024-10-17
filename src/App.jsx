@@ -12,6 +12,7 @@ import Odeme from "./pages/Odeme";
 import Iletisim from "./pages/Iletisim";
 import Amac from "./pages/Amac";
 import IlanOlustur from "./pages/IlanOlustur";
+import Admin from "./pages/admin/Admin";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path="/odeme" element={<Odeme />} />
           <Route path="/iletisim" element={<Iletisim />} />
           <Route path="/amac" element={<Amac />} />
+          <Route path="/admin" element={<Admin />} />
         </Routes>
       </BrowserRouter>
       <Toaster position="top-center" reverseOrder={false} />

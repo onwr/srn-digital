@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 const Form = () => {
   const [uyariMetin, setUyariMetin] = useState("");
   const [images, setImages] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     unvan: "",
     iletisim: "",
@@ -65,6 +66,7 @@ const Form = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const imageUrls = await uploadImages();
       const currentDate = new Date();
@@ -80,7 +82,10 @@ const Form = () => {
       });
 
       toast.success("İlan oluşturuldu");
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
+      toast.error("Bir hata oluştu");
       console.error("Hata oluştu:", error);
     }
   };
@@ -251,9 +256,10 @@ const Form = () => {
             <div className="col-span-full flex justify-center mt-3">
               <button
                 type="submit"
+                disabled={loading}
                 className="bg-lime-500 rounded-full p-2 w-full md:w-1/2 text-white hover:bg-lime-600 duration-300"
               >
-                İlan Oluştur
+                {loading ? "Oluşturuluyor.." : "İlan Oluştur"}
               </button>
             </div>
           </form>

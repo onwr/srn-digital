@@ -3,11 +3,13 @@ import toast from "react-hot-toast";
 import { db } from "../../../db/Firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 const Form = () => {
   const [loading, setLoading] = useState(false);
   const [kulAd, setKulAd] = useState("");
   const [sifre, setSifre] = useState("");
+  const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,8 +27,14 @@ const Form = () => {
         const user = querySnapshot.docs[0].data();
 
         Cookies.set("userUID", user.uid, { expires: 1 });
+        Cookies.set("ad", user.kulAd, { expires: 1 });
+        if(user.admin === true) {
+          Cookies.set("admin", true, { expires: 1 });
+        }
+
 
         toast.success("Giriş başarılı! Yönlendiriliyorsunuz...");
+        navigate("/")
       } else {
         toast.error("Kullanıcı adı veya şifre hatalı!");
       }
