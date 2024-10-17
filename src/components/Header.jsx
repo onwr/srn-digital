@@ -57,7 +57,7 @@ const Header = () => {
             <div className="relative">
               <button
                 onClick={() => setUserMenu(!userMenu)}
-                className="flex uppercase lg:px-4 py-2 justify-center hover:bg-lime-500 transition-all rounded-xl bg-lime-400 items-center gap-2"
+                className="flex uppercase lg:px-4 py-2 justify-center hover:bg-sky-500 transition-all rounded-xl bg-sky-300 items-center gap-2"
               >
                 {ad} <ChevronDown />
               </button>
@@ -83,7 +83,7 @@ const Header = () => {
           ) : (
             <a
               href="/kullanici/giris"
-              className="flex px-4 py-2 justify-center hover:bg-lime-500 transition-all rounded-xl bg-lime-400 items-center gap-2"
+              className="flex px-4 py-2 justify-center hover:bg-sky-500 transition-all rounded-xl bg-sky-400 items-center gap-2"
             >
               Üyelik İşlemleri <CircleUser />
             </a>

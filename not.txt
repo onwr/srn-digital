@@ -1,0 +1,6 @@
+kullanıcı adı şifre telefon e-posta, ünvan vergi kimlik no, fatura için adres bilgisi, 
+
+Tüm ilanlar da olacak panelde
+
+footer kısmına hızlı menü, yasal uyarılar ve telefon numarası, e-posta eklenecek
+

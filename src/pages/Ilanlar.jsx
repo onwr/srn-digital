@@ -1,13 +1,19 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { db } from "../db/Firebase";
 import { collection, getDocs } from "firebase/firestore";
 import toast from "react-hot-toast";
 import useEmblaCarousel from "embla-carousel-react";
+import ReactModal from "react-modal";
+import Cookies from "js-cookie";
+import { Pencil } from "lucide-react";
+import Guncelle from "../modals/ilan/Guncelle";
 
 const Ilanlar = () => {
   const [ilanData, setIlanData] = useState([]);
+  const [ilanGuncelle, setIlanGuncelle] = useState(false);
+  const [ilanId, setIlanId] = useState("");
 
   useEffect(() => {
     const ilanCek = async () => {
@@ -26,6 +32,10 @@ const Ilanlar = () => {
           }
         });
 
+        onayliIlanlar.sort(
+          (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+        );
+
         setIlanData(onayliIlanlar);
       } catch (error) {
         toast.error("Sunucularda hata var.");
@@ -36,6 +46,16 @@ const Ilanlar = () => {
     ilanCek();
   }, []);
 
+  const onClose = () => {
+    setIlanGuncelle(false);
+    setIlanId("");
+  };
+
+  const handleIlanGuncelle = (ilanid) => {
+    setIlanId(ilanid);
+    setIlanGuncelle(true);
+  };
+
   return (
     <div>
       <Header />
@@ -44,22 +64,30 @@ const Ilanlar = () => {
         <div className="grid grid-cols-1 gap-4">
           {ilanData.length > 0 ? (
             ilanData.map((ilan, ilanIndex) => (
-              <IlanItem key={ilanIndex} ilan={ilan} />
+              <IlanItem
+                key={ilanIndex}
+                ilan={ilan}
+                ilanGuncelleModal={handleIlanGuncelle}
+              />
             ))
           ) : (
             <p className="text-center text-gray-600">Henüz onaylı ilan yok.</p>
           )}
         </div>
       </div>
+      {ilanGuncelle && <Guncelle ilanID={ilanId} onClose={onClose} />}
       <Footer />
     </div>
   );
 };
 
-const IlanItem = ({ ilan }) => {
+const IlanItem = ({ ilan, ilanGuncelleModal }) => {
   const [viewportRef, embla] = useEmblaCarousel({ loop: false });
   const [prevBtnEnabled, setPrevBtnEnabled] = useState(false);
   const [nextBtnEnabled, setNextBtnEnabled] = useState(false);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const userUID = Cookies.get("userUID");
+  const [selectedImage, setSelectedImage] = useState("");
 
   useEffect(() => {
     if (embla) {
@@ -70,9 +98,13 @@ const IlanItem = ({ ilan }) => {
     }
   }, [embla]);
 
-  const handleImageClick = (image) => {
-    const newWindow = window.open(image, "_blank");
-    newWindow.focus();
+  const openModal = (image) => {
+    setSelectedImage(image);
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
   };
 
   const scrollPrev = () => embla && embla.scrollPrev();
@@ -80,45 +112,96 @@ const IlanItem = ({ ilan }) => {
 
   return (
     <div className="border flex flex-col md:flex-row gap-5 rounded-lg shadow-lg bg-white p-4">
-      <div className="w-full md:w-1/3">
-        {ilan.images && ilan.images.length > 0 && (
-          <div className="mt-2 relative">
-            <div className="overflow-hidden" ref={viewportRef}>
-              <div className="flex gap-2 items-center justify-start">
-                {ilan.images.map((image, index) => (
-                  <div key={index} className="min-w-[300px] relative h-[200px]">
-                    <img
-                      src={image}
-                      alt={`İlan Görseli ${index + 1}`}
-                      className="rounded mx-auto cursor-pointer w-full h-full object-cover"
-                      onClick={() => handleImageClick(image)}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-            <button
-              className={`absolute top-1/2 left-0 transform -translate-y-1/2 p-2 bg-gray-800 text-white rounded-full ${
-                !prevBtnEnabled ? "opacity-50" : ""
-              }`}
-              onClick={scrollPrev}
-            >
-              ‹
-            </button>
-            <button
-              className={`absolute top-1/2 right-0 transform -translate-y-1/2 p-2 bg-gray-800 text-white rounded-full ${
-                !nextBtnEnabled ? "opacity-50" : ""
-              }`}
-              onClick={scrollNext}
-              disabled={!nextBtnEnabled}
-            >
-              ›
-            </button>
+      {ilan.images && ilan.images.length > 0 && (
+        <div className="w-full md:w-1/3">
+          <div className="mb-3">
+            <img
+              src={ilan.images[0]}
+              alt="Kapak Görseli"
+              className="rounded cursor-pointer w-full h-64 object-cover"
+              onClick={() => openModal(ilan.images[0])}
+            />
           </div>
+
+          {ilan.images.length > 1 && (
+            <div className="mt-2 relative">
+              <div className="overflow-hidden" ref={viewportRef}>
+                <div className="flex gap-2 items-center justify-start">
+                  {ilan.images.slice(1).map((image, index) => (
+                    <div
+                      key={index}
+                      className="min-w-[100px] relative h-[100px]"
+                    >
+                      <img
+                        src={image}
+                        alt={`İlan Görseli ${index + 1}`}
+                        className="rounded mx-auto cursor-pointer w-full h-full object-cover"
+                        onClick={() => openModal(image)}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                className={`absolute top-1/2 left-0 transform -translate-y-1/2 p-2 bg-gray-800 text-white rounded-full ${
+                  !prevBtnEnabled ? "opacity-50" : ""
+                }`}
+                onClick={scrollPrev}
+              >
+                ‹
+              </button>
+              <button
+                className={`absolute top-1/2 right-0 transform -translate-y-1/2 p-2 bg-gray-800 text-white rounded-full ${
+                  !nextBtnEnabled ? "opacity-50" : ""
+                }`}
+                onClick={scrollNext}
+                disabled={!nextBtnEnabled}
+              >
+                ›
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      <ReactModal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center"
+        ariaHideApp={false}
+      >
+        <div className="relative max-w-screen-lg">
+          <img
+            src={selectedImage}
+            alt="Full Görsel"
+            className="w-auto h-auto object-cover"
+          />
+          <button
+            onClick={closeModal}
+            className="absolute top-4 right-4 text-white text-2xl font-bold"
+          >
+            &times;
+          </button>
+        </div>
+      </ReactModal>
+
+      <div className="flex-grow relative">
+        <h3 className="text-xl font-bold text-gray-800 pt-10 md:pt-0">
+          {ilan.unvan}
+        </h3>
+        {userUID === ilan.userUID && (
+          <Pencil
+            onClick={() => ilanGuncelleModal(ilan.id)}
+            className="absolute right-0 cursor-pointer hover:bg-lime-500 duration-500 p-2 size-9 bg-black text-white rounded-xl top-10"
+          />
         )}
-      </div>
-      <div className="flex-grow">
-        <h3 className="text-xl font-bold text-gray-800">{ilan.unvan}</h3>
+        <p className="text-md absolute right-32 top-0 font-semibold bg-sky-200 p-1 rounded text-gray-700">
+          {ilan.id}
+        </p>
+        <p className="text-md absolute right-0 top-0 font-semibold bg-lime-200 p-1 rounded text-gray-700">
+          {ilan.creationDate}
+        </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mt-3">
           <p className="text-md font-semibold text-gray-700">
             İletişim <br />
@@ -158,10 +241,6 @@ const IlanItem = ({ ilan }) => {
             <span className="font-normal break-words max-h-32 overflow-y-auto">
               {ilan.ozellikler}
             </span>{" "}
-          </p>
-          <p className="text-md font-semibold text-gray-700">
-            Oluşturulma Tarihi <br />
-            <span className="font-normal">{ilan.creationDate}</span>
           </p>
         </div>
       </div>

@@ -13,6 +13,9 @@ import AmacPanel from "./components/Amac";
 import IletisimPanel from "./components/IletisimPanel";
 import Acenteler from "./components/Acenteler";
 import UyariMetin from "./components/UyariMetin";
+import TasimaSirketleri from "./components/TasimaSirketleri";
+import Antrepolar from "./components/Antrepolar";
+import Gumruk from "./components/Gumruk";
 
 const Sidebar = () => {
   const [aktifComp, setAktifComp] = useState(0);
@@ -102,6 +105,9 @@ const Sidebar = () => {
         {aktifComp === 2 && <AmacPanel />}
         {aktifComp === 3 && <UyariMetin />}
         {aktifComp === 4 && <IletisimPanel />}
+        {aktifComp === 5 && <Gumruk />}
+        {aktifComp === 6 && <Antrepolar />}
+        {aktifComp === 7 && <TasimaSirketleri />}
         {aktifComp === 8 && <Acenteler />}
       </div>
     </div>

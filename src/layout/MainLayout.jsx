@@ -13,6 +13,7 @@ const AuthLayout = ({ children }) => {
     const checkUser = async () => {
       if (!userUID) {
         navigate("/kullanici/giris");
+        alert("İşlem yapabilmek için lütfen giriş yapınız.");
         return;
       }
 
@@ -22,9 +23,11 @@ const AuthLayout = ({ children }) => {
 
         if (!userSnapshot.exists()) {
           navigate("/kullanici/giris");
+          alert("İşlem yapabilmek için lütfen giriş yapınız.");
         }
       } catch (error) {
         console.error("Kullanıcı kontrol hatası:", error);
+        alert("İşlem yapabilmek için lütfen giriş yapınız.");
         navigate("/kullanici/giris");
       }
     };

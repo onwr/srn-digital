@@ -2,20 +2,30 @@ import { ImagePlus } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import iller from "../../helpers/il.json";
 import { storage, db } from "../../db/Firebase";
-import { addDoc, collection, doc, getDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import toast from "react-hot-toast";
+import Cookies from "js-cookie";
 
 const Form = () => {
   const [uyariMetin, setUyariMetin] = useState("");
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const userUID = Cookies.get("userUID");
   const [formData, setFormData] = useState({
     unvan: "",
     iletisim: "",
     esya: "",
     mevcutMiktar: "",
     miktarFiyati: "",
+    miktarBirimi: "",
+    paraBirimi: "",
     gummruklu: "",
     bulunduguYer: "",
     bulunduguIl: "",
@@ -79,6 +89,8 @@ const Form = () => {
         images: imageUrls,
         onay: false,
         creationDate: formattedDate,
+        userUID,
+        timestamp: serverTimestamp(),
       });
 
       toast.success("İlan oluşturuldu");
@@ -144,7 +156,7 @@ const Form = () => {
         <div className="flex-1 w-full border rounded-xl bg-zinc-50 p-4">
           <p className="text-xl font-medium">İlan Detayları</p>
           <form
-            className="mt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2"
+            className="mt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2"
             onSubmit={handleSubmit}
           >
             <input
@@ -183,15 +195,48 @@ const Form = () => {
               }
               className="p-2 focus:ring-2 duration-300 ring-lime-100 bg-white border outline-none rounded"
             />
-            <input
-              type="text"
-              placeholder="Miktar Fiyatı"
-              value={formData.miktarFiyati}
-              onChange={(e) =>
-                setFormData({ ...formData, miktarFiyati: e.target.value })
-              }
-              className="p-2 focus:ring-2 duration-300 ring-lime-100 bg-white border outline-none rounded"
-            />
+            <div className="grid grid-cols-3 gap-2 col-span-full">
+              <input
+                type="text"
+                placeholder="Miktar Fiyatı"
+                value={formData.miktarFiyati}
+                onChange={(e) =>
+                  setFormData({ ...formData, miktarFiyati: e.target.value })
+                }
+                className="p-2 focus:ring-2 duration-300 ring-lime-100 bg-white border outline-none rounded"
+              />
+              <select
+                value={formData.miktarBirimi}
+                onChange={(e) =>
+                  setFormData({ ...formData, miktarBirimi: e.target.value })
+                }
+                className="p-2 focus:ring-2 duration-300 ring-lime-100 bg-white border outline-none rounded"
+              >
+                <option value="" disabled>
+                  Birim Seç
+                </option>
+                <option value="KG">KG</option>
+                <option value="ADET">ADET</option>
+                <option value="M2">M2</option>
+                <option value="LT">LT</option>
+                <option value="VS">VS</option>
+              </select>
+              <select
+                value={formData.paraBirimi}
+                onChange={(e) =>
+                  setFormData({ ...formData, paraBirimi: e.target.value })
+                }
+                className="p-2 focus:ring-2 duration-300 ring-lime-100 bg-white border outline-none rounded"
+              >
+                <option value="" disabled>
+                  Para Birimi
+                </option>
+                <option value="TL">TL</option>
+                <option value="Dolar">Dolar</option>
+                <option value="Euro">Euro</option>
+                <option value="Sterlin">Sterlin</option>
+              </select>
+            </div>
             <select
               value={formData.gummruklu}
               onChange={(e) =>
@@ -200,10 +245,10 @@ const Form = () => {
               className="p-2 focus:ring-2 duration-300 ring-lime-100 bg-white border outline-none rounded"
             >
               <option value="" disabled>
-                Eşya Gümrüklü Mü?
+                Gümrüklü mü?
               </option>
-              <option value="evet">Evet</option>
-              <option value="hayir">Hayır</option>
+              <option value="Evet">Evet</option>
+              <option value="Hayır">Hayır</option>
             </select>
             <select
               value={formData.bulunduguYer}
@@ -213,11 +258,11 @@ const Form = () => {
               className="p-2 focus:ring-2 duration-300 ring-lime-100 bg-white border outline-none rounded"
             >
               <option value="" disabled>
-                Eşyanın Bulunduğu Yer
+                Bulunduğu Yer
               </option>
-              <option value="antrepo">Antrepo</option>
-              <option value="depo">Depo</option>
-              <option value="gecici-depolama">Geçici Depolama</option>
+              <option value="Antrepo">Antrepo</option>
+              <option value="Depo">Depo</option>
+              <option value="Geçici Depolama">Geçici Depolama</option>
             </select>
             <select
               value={formData.bulunduguIl}
@@ -227,10 +272,10 @@ const Form = () => {
               className="p-2 focus:ring-2 duration-300 ring-lime-100 bg-white border outline-none rounded"
             >
               <option value="" disabled>
-                Eşyanın Bulunduğu İl
+                Bulunduğu İl
               </option>
               {illerListesi.map((il) => (
-                <option key={il.id} value={il.id}>
+                <option key={il.ad} value={il.ad}>
                   {il.ad}
                 </option>
               ))}
@@ -245,25 +290,21 @@ const Form = () => {
               className="p-2 focus:ring-2 duration-300 ring-lime-100 bg-white border outline-none rounded"
             />
             <textarea
-              maxLength={170}
-              placeholder="Eşya Özellikleri"
+              placeholder="Özellikler"
               value={formData.ozellikler}
               onChange={(e) =>
                 setFormData({ ...formData, ozellikler: e.target.value })
               }
-              className="p-2 h-24 focus:ring-2 duration-300 ring-lime-100 bg-white border outline-none rounded"
+              className="p-2 focus:ring-2 duration-300 ring-lime-100 bg-white border outline-none rounded col-span-full"
+              rows="5"
             />
-            <div className="col-span-full flex justify-center mt-3">
-              <button
-                type="submit"
-                disabled={loading}
-                className="bg-lime-500 rounded-full p-2 w-full md:w-1/2 text-white hover:bg-lime-600 duration-300"
-              >
-                {loading ? "Oluşturuluyor.." : "İlan Oluştur"}
-              </button>
-            </div>
+            <button
+              disabled={loading}
+              className="p-2 focus:ring-2 duration-300 ring-lime-100 bg-green-500 text-white rounded col-span-full"
+            >
+              {loading ? "İlan oluşturuluyor..." : "İlan Oluştur"}
+            </button>
           </form>
-          <p className="text-sm text-red-500 mt-2">{uyariMetin}</p>
         </div>
       </div>
     </>

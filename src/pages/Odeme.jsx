@@ -52,6 +52,10 @@ const Odeme = () => {
                 <span className="font-bold text-lg">{gelenData.sube}</span>
               </p>
               <p className="text-center max-w-xs lg:col-span-4 lg:max-w-auto w-full mt-5 lg:w-full bg-zinc-300 bg-opacity-20 border border-black/10 mx-auto rounded shadow-inner py-1">
+                Ünvan <br />
+                <span className="font-bold text-lg">{gelenData.unvan} ₺</span>
+              </p>
+              <p className="text-center max-w-xs lg:col-span-4 lg:max-w-auto w-full mt-5 lg:w-full bg-zinc-300 bg-opacity-20 border border-black/10 mx-auto rounded shadow-inner py-1">
                 Ücret <br />
                 <span className="font-bold text-lg">{gelenData.ucret} ₺</span>
               </p>

@@ -12,7 +12,7 @@ import { db } from "../../../db/Firebase";
 import toast from "react-hot-toast";
 import Modal from "react-modal";
 
-const Acenteler = () => {
+const Antrepolar = () => {
   const [sirketData, setSirketData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [sehir, setSehir] = useState("");
@@ -23,7 +23,7 @@ const Acenteler = () => {
   useEffect(() => {
     const veriCek = async () => {
       try {
-        const qDoc = collection(db, "acenteler");
+        const qDoc = collection(db, "antrepolar");
         const donenSnap = await getDocs(qDoc);
 
         const donenArr = donenSnap.docs.map((doc) => ({
@@ -44,12 +44,12 @@ const Acenteler = () => {
   const acenteEkle = async () => {
     try {
       if (isEdit) {
-        const docRef = doc(db, "acenteler", editId);
+        const docRef = doc(db, "antrepolar", editId);
         await updateDoc(docRef, { sehir, metin });
-        toast.success("Acente başarıyla güncellendi.");
+        toast.success("Başarıyla güncellendi.");
       } else {
-        await addDoc(collection(db, "acenteler"), { sehir, metin });
-        toast.success("Acente başarıyla eklendi.");
+        await addDoc(collection(db, "antrepolar"), { sehir, metin });
+        toast.success("Başarıyla eklendi.");
       }
 
       setIsModalOpen(false);
@@ -65,8 +65,8 @@ const Acenteler = () => {
 
   const acenteSil = async (id) => {
     try {
-      await deleteDoc(doc(db, "acenteler", id));
-      toast.success("Acente başarıyla silindi.");
+      await deleteDoc(doc(db, "antrepolar", id));
+      toast.success("Başarıyla silindi.");
       setSirketData(sirketData.filter((sirket) => sirket.id !== id));
     } catch (error) {
       toast.error("Silme işlemi başarısız.");
@@ -84,7 +84,7 @@ const Acenteler = () => {
 
   return (
     <div className="container max-w-screen-lg border bg-zinc-100 p-4 rounded-xl">
-      <p className="text-xl font-semibold">Forwarder / Acenteler</p>
+      <p className="text-xl font-semibold">Genel Antrepolar</p>
       <div className="grid grid-cols-4 gap-3 mt-5">
         <button
           className="p-12 bg-lime-300 hover:bg-lime-200 duration-300 flex items-center justify-center rounded-lg"
@@ -130,7 +130,7 @@ const Acenteler = () => {
       >
         <div className="p-4 bg-zinc-100 rounded-xl w-full max-w-md">
           <h2 className="text-lg font-bold mb-4">
-            {isEdit ? "Acente Düzenle" : "Yeni Acente Ekle"}
+            {isEdit ? "Düzenle" : "Yeni Ekle"}
           </h2>
           <div className="flex flex-col gap-4">
             <input
@@ -159,4 +159,4 @@ const Acenteler = () => {
   );
 };
 
-export default Acenteler;
+export default Antrepolar;
