@@ -105,7 +105,7 @@ const Footer = () => {
         </div>
         <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
         <p class="text-sm text-center text-gray-500 sm:text-center dark:text-gray-400">
-          © D-STAND Tüm Hakları Saklıdır. Web design{" "}
+          © D-STAND Tüm Hakları Saklıdır. Designed by{" "}
           <a href="https://srndijital.com" className="underline">
             SRN Dijital
           </a>

@@ -1,6 +1,7 @@
 import {
   CircleAlert,
   ClipboardType,
+  Cookie,
   Landmark,
   ListCheck,
   Pencil,
@@ -16,6 +17,8 @@ import UyariMetin from "./components/UyariMetin";
 import TasimaSirketleri from "./components/TasimaSirketleri";
 import Antrepolar from "./components/Antrepolar";
 import Gumruk from "./components/Gumruk";
+import TumIlanlar from "./components/TumIlanlar";
+import YasalMetinler from "./components/YasalMetinler";
 
 const Sidebar = () => {
   const [aktifComp, setAktifComp] = useState(0);
@@ -32,6 +35,14 @@ const Sidebar = () => {
             }  flex gap-2 py-3 rounded-l-full items-center justify-center`}
           >
             Onay Bekleyen İlanlar <ListCheck />
+          </button>
+          <button
+            onClick={() => setAktifComp(9)}
+            className={`w-full bg-white hover:ring ring-sky-500 duration-300 text-black ${
+              aktifComp === 9 ? "border-r-8 border-sky-400" : ""
+            }  flex gap-2 py-3 rounded-l-full items-center justify-center`}
+          >
+            Tüm İlanlar <ListCheck />
           </button>
           <button
             onClick={() => setAktifComp(1)}
@@ -64,6 +75,14 @@ const Sidebar = () => {
             }  flex gap-2 py-3 rounded-l-full items-center justify-center`}
           >
             İletişim Bilgileri <Pencil />
+          </button>
+          <button
+            onClick={() => setAktifComp(10)}
+            className={`w-full bg-white hover:ring ring-sky-500 duration-300 text-black ${
+              aktifComp === 10 ? "border-r-8 border-sky-400" : ""
+            }  flex gap-2 py-3 rounded-l-full items-center justify-center`}
+          >
+            Yasal Metinler <Cookie />
           </button>
           <button
             onClick={() => setAktifComp(5)}
@@ -109,6 +128,8 @@ const Sidebar = () => {
         {aktifComp === 6 && <Antrepolar />}
         {aktifComp === 7 && <TasimaSirketleri />}
         {aktifComp === 8 && <Acenteler />}
+        {aktifComp === 9 && <TumIlanlar />}
+        {aktifComp === 10 && <YasalMetinler />}
       </div>
     </div>
   );

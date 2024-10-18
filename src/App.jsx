@@ -13,6 +13,9 @@ import Iletisim from "./pages/Iletisim";
 import Amac from "./pages/Amac";
 import IlanOlustur from "./pages/IlanOlustur";
 import Admin from "./pages/admin/Admin";
+import Gizlilik from "./pages/Gizlilik";
+import Kosullar from "./pages/Kosullar";
+import Cerez from "./pages/Cerez";
 
 function App() {
   return (
@@ -30,6 +33,10 @@ function App() {
           <Route path="/odeme" element={<Odeme />} />
           <Route path="/iletisim" element={<Iletisim />} />
           <Route path="/amac" element={<Amac />} />
+          <Route path="/gizlilik" element={<Gizlilik />} />
+          <Route path="/kvkk" element={<Kosullar />} />
+          <Route path="/cerez" element={<Cerez />} />
+
           <Route path="/admin" element={<Admin />} />
         </Routes>
       </BrowserRouter>

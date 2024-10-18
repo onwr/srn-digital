@@ -14,6 +14,7 @@ const Form = () => {
   const [faturaBilgi, setFBilgi] = useState("");
   const [kulAd, setKulAd] = useState("");
   const [sifre, setSifre] = useState("");
+  const [vkn, setVkn] = useState("");
   const navigate = useNavigate();
 
   const formatPhoneNumber = (value) => {
@@ -65,6 +66,7 @@ const Form = () => {
         faturaBilgi,
         kulAd,
         sifre,
+        vkn,
         uid: user.uid,
         olusturulmaTarih: new Date().toISOString(),
       });
@@ -91,11 +93,18 @@ const Form = () => {
           <div className="flex flex-col items-center justify-center md:grid  md:grid-cols-2 gap-2 w-full max-w-xl">
             <input
               type="text"
-              value={unvan}
-              onChange={(e) => setUnvan(e.target.value)}
+              value={kulAd}
+              onChange={(e) => setKulAd(e.target.value)}
               autoFocus
               className="p-2 max-w-xs text-center duration-300 outline-none focus:ring-1 ring-lime-300 w-full border rounded-md"
-              placeholder="Ünvan"
+              placeholder="Kullanıcı Adı"
+            />
+            <input
+              type="password"
+              value={sifre}
+              onChange={(e) => setSifre(e.target.value)}
+              className="p-2 max-w-xs text-center duration-300 outline-none focus:ring-1 ring-lime-300 w-full border rounded-md"
+              placeholder="Şifre"
             />
             <input
               type="tel"
@@ -113,11 +122,28 @@ const Form = () => {
               className="p-2 max-w-xs text-center duration-300 outline-none focus:ring-1 ring-lime-300 w-full border rounded-md"
               placeholder="E-Posta"
             />
+
+            <input
+              type="text"
+              value={unvan}
+              onChange={(e) => setUnvan(e.target.value)}
+              autoFocus
+              className="p-2 max-w-xs text-center duration-300 outline-none focus:ring-1 ring-lime-300 w-full border rounded-md"
+              placeholder="Ünvan"
+            />
+            <input
+              type="text"
+              value={vkn}
+              onChange={(e) => setVkn(e.target.value)}
+              autoFocus
+              className="p-2 max-w-xs text-center duration-300 outline-none focus:ring-1 ring-lime-300 w-full border rounded-md"
+              placeholder="Vergi Kimlik No"
+            />
             <input
               type="email"
               value={fPosta}
               onChange={(e) => setFPosta(e.target.value)}
-              className="p-2 max-w-xs text-center duration-300 outline-none focus:ring-1 ring-lime-300 w-full border rounded-md"
+              className="p-2 max-w-xs md:max-w-none text-center col-span-2 duration-300 outline-none focus:ring-1 ring-lime-300 w-full border rounded-md"
               placeholder="Faturanın İletilecegi E-Posta"
             />
             <textarea
@@ -125,22 +151,7 @@ const Form = () => {
               value={faturaBilgi}
               onChange={(e) => setFBilgi(e.target.value)}
               className="p-2 max-w-xs md:max-w-none col-span-2 min-h-10 max-h-32 text-center outline-none focus:ring-1 ring-lime-300 w-full border rounded-md"
-              placeholder="Fatura için diğer bilgiler"
-            />
-            <input
-              type="text"
-              value={kulAd}
-              onChange={(e) => setKulAd(e.target.value)}
-              autoFocus
-              className="p-2 max-w-xs text-center duration-300 outline-none focus:ring-1 ring-lime-300 w-full border rounded-md"
-              placeholder="Kullanıcı Adı"
-            />
-            <input
-              type="password"
-              value={sifre}
-              onChange={(e) => setSifre(e.target.value)}
-              className="p-2 max-w-xs text-center duration-300 outline-none focus:ring-1 ring-lime-300 w-full border rounded-md"
-              placeholder="Şifre"
+              placeholder="Fatura için adres bilgileri"
             />
           </div>
           <button

@@ -35,6 +35,7 @@ const Header = () => {
   const cikisHandler = () => {
     Cookies.remove("userUID");
     Cookies.remove("ad");
+    Cookies.remove("admin");
     setUserMenu(false);
     window.location.reload();
   };

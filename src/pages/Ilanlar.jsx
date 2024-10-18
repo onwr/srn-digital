@@ -8,12 +8,19 @@ import useEmblaCarousel from "embla-carousel-react";
 import ReactModal from "react-modal";
 import Cookies from "js-cookie";
 import { Pencil } from "lucide-react";
+import iller from "../helpers/il.json";
 import Guncelle from "../modals/ilan/Guncelle";
 
 const Ilanlar = () => {
   const [ilanData, setIlanData] = useState([]);
   const [ilanGuncelle, setIlanGuncelle] = useState(false);
   const [ilanId, setIlanId] = useState("");
+  const [selectedSehir, setSelectedSehir] = useState("");
+
+  const illerListesi = Object.entries(iller).map(([key, value]) => ({
+    id: key,
+    ad: value,
+  }));
 
   useEffect(() => {
     const ilanCek = async () => {
@@ -56,14 +63,32 @@ const Ilanlar = () => {
     setIlanGuncelle(true);
   };
 
+  const filteredIlanlar = ilanData.filter((ilan) =>
+    selectedSehir ? ilan.bulunduguIl === selectedSehir : true
+  );
+
   return (
     <div>
       <Header />
       <div className="container mx-auto max-w-screen-xl flex flex-col gap-5 py-5">
-        <h2 className="text-2xl font-bold text-center mb-4">Onaylı İlanlar</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold">Onaylı İlanlar</h2>
+          <select
+            className="p-2 border rounded-md"
+            value={selectedSehir}
+            onChange={(e) => setSelectedSehir(e.target.value)}
+          >
+            <option value="">Tüm Şehirler</option>
+            {illerListesi.map((il) => (
+              <option key={il.id} value={il.ad}>
+                {il.ad}
+              </option>
+            ))}
+          </select>
+        </div>
         <div className="grid grid-cols-1 gap-4">
-          {ilanData.length > 0 ? (
-            ilanData.map((ilan, ilanIndex) => (
+          {filteredIlanlar.length > 0 ? (
+            filteredIlanlar.map((ilan, ilanIndex) => (
               <IlanItem
                 key={ilanIndex}
                 ilan={ilan}
@@ -111,14 +136,14 @@ const IlanItem = ({ ilan, ilanGuncelleModal }) => {
   const scrollNext = () => embla && embla.scrollNext();
 
   return (
-    <div className="border flex flex-col md:flex-row gap-5 rounded-lg shadow-lg bg-white p-4">
+    <div className="border items-center flex flex-col md:flex-row gap-5 rounded-lg shadow-lg bg-white p-4">
       {ilan.images && ilan.images.length > 0 && (
         <div className="w-full md:w-1/3">
           <div className="mb-3">
             <img
               src={ilan.images[0]}
               alt="Kapak Görseli"
-              className="rounded cursor-pointer w-full h-64 object-cover"
+              className="rounded border cursor-pointer w-auto h-52 object-cover"
               onClick={() => openModal(ilan.images[0])}
             />
           </div>
@@ -200,7 +225,7 @@ const IlanItem = ({ ilan, ilanGuncelleModal }) => {
           {ilan.creationDate}
         </p>
         <p className="text-xs absolute right-0 top-0 font-semibold bg-lime-200 p-1 rounded text-gray-700">
-          DSTAND145231
+          {ilan.ilanNo}
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mt-3">
           <p className="text-md font-semibold text-gray-700">
@@ -216,7 +241,10 @@ const IlanItem = ({ ilan, ilanGuncelleModal }) => {
           </p>
           <p className="text-md font-semibold text-gray-700">
             Fiyat <br />
-            <span className="font-normal">{ilan.miktarFiyati}</span>
+            <span className="font-normal">
+              {ilan.miktarFiyati} {ilan.paraBirimi} <br />
+              <span className="text-xs">{ilan.miktarBirimi}</span>
+            </span>
           </p>
           <p className="text-md font-semibold text-gray-700">
             Gümrüklü Mü <br />
@@ -236,7 +264,7 @@ const IlanItem = ({ ilan, ilanGuncelleModal }) => {
             Menşe Ülke <br />
             <span className="font-normal">{ilan.menseUlke}</span>
           </p>
-          <p className="text-md col-span-3 overflow-y-auto font-semibold text-gray-700">
+          <p className="text-md col-span-2 xl:col-span-4 overflow-y-auto font-semibold text-gray-700">
             Açıklama <br />
             <span className="font-normal break-words max-h-32 overflow-y-auto">
               {ilan.ozellikler}

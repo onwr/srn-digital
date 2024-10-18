@@ -84,8 +84,11 @@ const Form = () => {
         currentDate.getMonth()
       )} ${currentDate.getFullYear()}`;
 
+      const ilanNo = `DSTAND${Math.floor(Math.random() * 100000)}`;
+
       const newDocRef = await addDoc(collection(db, "ilanlar"), {
         ...formData,
+        ilanNo,
         images: imageUrls,
         onay: false,
         creationDate: formattedDate,
@@ -305,6 +308,7 @@ const Form = () => {
               {loading ? "İlan oluşturuluyor..." : "İlan Oluştur"}
             </button>
           </form>
+          <p className="text-red-500 text-xs mt-3">{uyariMetin}</p>
         </div>
       </div>
     </>
