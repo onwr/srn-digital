@@ -86,7 +86,7 @@ const Ilanlar = () => {
             ))}
           </select>
         </div>
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {filteredIlanlar.length > 0 ? (
             filteredIlanlar.map((ilan, ilanIndex) => (
               <IlanItem
@@ -136,14 +136,14 @@ const IlanItem = ({ ilan, ilanGuncelleModal }) => {
   const scrollNext = () => embla && embla.scrollNext();
 
   return (
-    <div className="border items-center flex flex-col md:flex-row gap-5 rounded-lg shadow-lg bg-white p-4">
+    <div className="border items-center flex flex-col gap-5 rounded-lg shadow-lg bg-white p-4">
       {ilan.images && ilan.images.length > 0 && (
-        <div className="w-full md:w-1/3">
+        <div className="w-full">
           <div className="mb-3">
             <img
               src={ilan.images[0]}
               alt="Kapak Görseli"
-              className="rounded border cursor-pointer w-auto h-52 object-cover"
+              className="rounded border mx-auto cursor-pointer w-auto h-52 object-cover"
               onClick={() => openModal(ilan.images[0])}
             />
           </div>
@@ -155,7 +155,7 @@ const IlanItem = ({ ilan, ilanGuncelleModal }) => {
                   {ilan.images.slice(1).map((image, index) => (
                     <div
                       key={index}
-                      className="min-w-[100px] relative h-[100px]"
+                      className="min-w-[100px] mx-auto relative h-[100px]"
                     >
                       <img
                         src={image}
@@ -230,7 +230,9 @@ const IlanItem = ({ ilan, ilanGuncelleModal }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mt-3">
           <p className="text-md font-semibold text-gray-700">
             İletişim <br />
-            <span className="font-normal">{ilan.iletisim}</span>
+            <span className="font-normal">
+              {userUID ? ilan.iletisim : "Giriş yapınız"}
+            </span>
           </p>
           <p className="text-md font-semibold text-gray-700">
             Eşya <br /> <span className="font-normal">{ilan.esya}</span>
