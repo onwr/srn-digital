@@ -196,11 +196,11 @@ const IlanItem = ({ ilan, ilanGuncelleModal }) => {
             className="absolute right-0 cursor-pointer hover:bg-lime-500 duration-500 p-2 size-9 bg-black text-white rounded-xl top-10"
           />
         )}
-        <p className="text-md absolute right-32 top-0 font-semibold bg-sky-200 p-1 rounded text-gray-700">
-          {ilan.id}
-        </p>
-        <p className="text-md absolute right-0 top-0 font-semibold bg-lime-200 p-1 rounded text-gray-700">
+        <p className="text-xs absolute right-28 top-0 font-semibold bg-sky-200 p-1 rounded text-gray-700">
           {ilan.creationDate}
+        </p>
+        <p className="text-xs absolute right-0 top-0 font-semibold bg-lime-200 p-1 rounded text-gray-700">
+          DSTAND145231
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mt-3">
           <p className="text-md font-semibold text-gray-700">
