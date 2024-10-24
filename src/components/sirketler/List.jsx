@@ -36,6 +36,7 @@ const List = () => {
               key={index}
               className="p-2 border rounded hover:bg-slate-50  duration-300"
             >
+              <img src={sirket.logo} />
               <p className="text-center text-blue-600 font-semibold text-lg">
                 {sirket.sehir}
               </p>

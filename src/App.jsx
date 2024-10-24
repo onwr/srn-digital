@@ -16,6 +16,7 @@ import Admin from "./pages/admin/Admin";
 import Gizlilik from "./pages/Gizlilik";
 import Kosullar from "./pages/Kosullar";
 import Cerez from "./pages/Cerez";
+import IlanDetay from "./pages/IlanDetay";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Ilanlar />} />
+          <Route path="/ilan/:id" element={<IlanDetay />} />
           <Route path="/ilan-birak" element={<IlanOlustur />} />
           <Route path="/acenteler" element={<Acenteler />} />
           <Route path="/sirketler" element={<Sirketler />} />
@@ -36,7 +38,6 @@ function App() {
           <Route path="/gizlilik" element={<Gizlilik />} />
           <Route path="/kvkk" element={<Kosullar />} />
           <Route path="/cerez" element={<Cerez />} />
-
           <Route path="/admin" element={<Admin />} />
         </Routes>
       </BrowserRouter>

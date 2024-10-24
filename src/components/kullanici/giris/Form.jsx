@@ -26,15 +26,19 @@ const Form = () => {
       if (!querySnapshot.empty) {
         const user = querySnapshot.docs[0].data();
 
-        Cookies.set("userUID", user.uid, { expires: 1 });
-        Cookies.set("ad", user.kulAd, { expires: 1 });
-        if(user.admin === true) {
-          Cookies.set("admin", true, { expires: 1 });
+        if (user.hesapDurum === true) {
+          Cookies.set("userUID", user.uid, { expires: 1 });
+          Cookies.set("ad", user.kulAd, { expires: 1 });
+          if (user.admin === true) {
+            Cookies.set("admin", true, { expires: 1 });
+          }
+          toast.success("Giriş başarılı! Yönlendiriliyorsunuz...");
+          navigate("/")
         }
-
-
-        toast.success("Giriş başarılı! Yönlendiriliyorsunuz...");
-        navigate("/")
+        else {
+          toast.error("Ödeme için gerekli adımları tamamlayınız. Tamamladıysanız üyeliğiniz kısa süre içerisinde aktif hale getirilecektir.");
+          navigate("/odeme")
+        }
       } else {
         toast.error("Kullanıcı adı veya şifre hatalı!");
       }
@@ -57,6 +61,7 @@ const Form = () => {
         >
           <input
             type="text"
+            required
             value={kulAd}
             onChange={(e) => setKulAd(e.target.value)}
             autoFocus
@@ -65,6 +70,7 @@ const Form = () => {
           />
           <input
             type="password"
+            required
             value={sifre}
             onChange={(e) => setSifre(e.target.value)}
             className="p-2 max-w-xs text-center duration-300 outline-none focus:ring-1 ring-lime-300 w-full border rounded-md"

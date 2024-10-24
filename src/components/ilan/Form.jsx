@@ -56,8 +56,8 @@ const Form = () => {
 
   const handleImageChange = (event) => {
     const files = Array.from(event.target.files);
-    if (files.length + images.length > 4) {
-      toast.error("En fazla 4 resim ekleyebilirsiniz.");
+    if (files.length + images.length > 10) {
+      toast.error("En fazla 10 resim ekleyebilirsiniz.");
       return;
     }
     setImages((prev) => [...prev, ...files]);
@@ -164,6 +164,7 @@ const Form = () => {
           >
             <input
               type="text"
+              required
               placeholder="Ünvan"
               value={formData.unvan}
               onChange={(e) =>
@@ -173,6 +174,7 @@ const Form = () => {
             />
             <input
               type="text"
+              required
               placeholder="İletişim (Tel/Mail)"
               value={formData.iletisim}
               onChange={(e) =>
@@ -182,6 +184,7 @@ const Form = () => {
             />
             <input
               type="text"
+              required
               placeholder="Eşya"
               value={formData.esya}
               onChange={(e) =>
@@ -191,6 +194,7 @@ const Form = () => {
             />
             <input
               type="text"
+              required
               placeholder="Mevcut Miktar"
               value={formData.mevcutMiktar}
               onChange={(e) =>
@@ -201,6 +205,7 @@ const Form = () => {
             <div className="grid grid-cols-3 gap-2 col-span-full">
               <input
                 type="text"
+                required
                 placeholder="Miktar Fiyatı"
                 value={formData.miktarFiyati}
                 onChange={(e) =>
@@ -213,6 +218,7 @@ const Form = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, miktarBirimi: e.target.value })
                 }
+                required
                 className="p-2 focus:ring-2 duration-300 ring-lime-100 bg-white border outline-none rounded"
               >
                 <option value="" disabled>
@@ -229,6 +235,7 @@ const Form = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, paraBirimi: e.target.value })
                 }
+                required
                 className="p-2 focus:ring-2 duration-300 ring-lime-100 bg-white border outline-none rounded"
               >
                 <option value="" disabled>
@@ -241,6 +248,7 @@ const Form = () => {
               </select>
             </div>
             <select
+            required
               value={formData.gummruklu}
               onChange={(e) =>
                 setFormData({ ...formData, gummruklu: e.target.value })
@@ -248,12 +256,13 @@ const Form = () => {
               className="p-2 focus:ring-2 duration-300 ring-lime-100 bg-white border outline-none rounded"
             >
               <option value="" disabled>
-                Gümrüklü mü?
+                Gümrük Durumu
               </option>
-              <option value="Evet">Evet</option>
-              <option value="Hayır">Hayır</option>
+              <option value="Evet">Serbest Dolaşımda</option>
+              <option value="Hayır">Serbest Dolaşımda Değil</option>
             </select>
             <select
+            required
               value={formData.bulunduguYer}
               onChange={(e) =>
                 setFormData({ ...formData, bulunduguYer: e.target.value })
@@ -268,6 +277,7 @@ const Form = () => {
               <option value="Geçici Depolama">Geçici Depolama</option>
             </select>
             <select
+            required
               value={formData.bulunduguIl}
               onChange={(e) =>
                 setFormData({ ...formData, bulunduguIl: e.target.value })
@@ -284,6 +294,7 @@ const Form = () => {
               ))}
             </select>
             <input
+            required
               type="text"
               placeholder="Menşe Ülke"
               value={formData.menseUlke}
@@ -293,6 +304,7 @@ const Form = () => {
               className="p-2 focus:ring-2 duration-300 ring-lime-100 bg-white border outline-none rounded"
             />
             <textarea
+            required
               placeholder="Özellikler"
               value={formData.ozellikler}
               onChange={(e) =>

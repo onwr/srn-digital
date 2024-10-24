@@ -11,12 +11,14 @@ import React, { useEffect, useState } from "react";
 import { db } from "../../../db/Firebase";
 import toast from "react-hot-toast";
 import Modal from "react-modal";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const Gumruk = () => {
   const [sirketData, setSirketData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [sehir, setSehir] = useState("");
   const [metin, setMetin] = useState("");
+  const [logo, setLogo] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
   const [editId, setEditId] = useState(null);
 
@@ -43,12 +45,21 @@ const Gumruk = () => {
 
   const acenteEkle = async () => {
     try {
+      let logoURL = null;
+
+      if (logo) {
+        const storage = getStorage();
+        const logoRef = ref(storage, `logos/${logo.name}`);
+        await uploadBytes(logoRef, logo);
+        logoURL = await getDownloadURL(logoRef);
+      }
+
       if (isEdit) {
         const docRef = doc(db, "musavirlikler", editId);
-        await updateDoc(docRef, { sehir, metin });
+        await updateDoc(docRef, { sehir, metin, logo: logoURL });
         toast.success("Başarıyla güncellendi.");
       } else {
-        await addDoc(collection(db, "musavirlikler"), { sehir, metin });
+        await addDoc(collection(db, "musavirlikler"), { sehir, metin, logo: logoURL });
         toast.success("Başarıyla eklendi.");
       }
 
@@ -78,6 +89,7 @@ const Gumruk = () => {
     setIsModalOpen(true);
     setSehir(sirket.sehir);
     setMetin(sirket.metin);
+    setLogo(null);
     setIsEdit(true);
     setEditId(sirket.id);
   };
@@ -104,6 +116,7 @@ const Gumruk = () => {
             <p className="text-xs border-black/20 w-full text-center p-2 border rounded text-black">
               {sirket.metin}
             </p>
+            {sirket.logo && <img src={sirket.logo} alt="Logo" className="h-auto w-full rounded min-w-[100px]" />}
             <div className="flex gap-2 mt-2">
               <button
                 className="bg-blue-500 text-white px-3 py-1 rounded"
@@ -145,6 +158,12 @@ const Gumruk = () => {
               value={metin}
               onChange={(e) => setMetin(e.target.value)}
               className="p-2 border rounded"
+            />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setLogo(e.target.files[0])}
+              className="p-2  border rounded"
             />
             <button
               onClick={acenteEkle}

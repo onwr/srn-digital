@@ -11,12 +11,14 @@ import React, { useEffect, useState } from "react";
 import { db } from "../../../db/Firebase";
 import toast from "react-hot-toast";
 import Modal from "react-modal";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const Antrepolar = () => {
   const [sirketData, setSirketData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [sehir, setSehir] = useState("");
   const [metin, setMetin] = useState("");
+  const [logo, setLogo] = useState(null); // Fotoğraf durumu
   const [isEdit, setIsEdit] = useState(false);
   const [editId, setEditId] = useState(null);
 
@@ -43,18 +45,29 @@ const Antrepolar = () => {
 
   const acenteEkle = async () => {
     try {
+      let logoURL = null;
+
+      // Fotoğraf yükleme
+      if (logo) {
+        const storage = getStorage();
+        const logoRef = ref(storage, `photos/${logo.name}`);
+        await uploadBytes(logoRef, logo);
+        logoURL = await getDownloadURL(logoRef);
+      }
+
       if (isEdit) {
         const docRef = doc(db, "antrepolar", editId);
-        await updateDoc(docRef, { sehir, metin });
+        await updateDoc(docRef, { sehir, metin, logo: logoURL });
         toast.success("Başarıyla güncellendi.");
       } else {
-        await addDoc(collection(db, "antrepolar"), { sehir, metin });
+        await addDoc(collection(db, "antrepolar"), { sehir, metin, logo: logoURL });
         toast.success("Başarıyla eklendi.");
       }
 
       setIsModalOpen(false);
       setSehir("");
       setMetin("");
+      setLogo(null); // Fotoğraf durumunu sıfırla
       setIsEdit(false);
       setEditId(null);
     } catch (error) {
@@ -78,6 +91,7 @@ const Antrepolar = () => {
     setIsModalOpen(true);
     setSehir(sirket.sehir);
     setMetin(sirket.metin);
+    setLogo(null);
     setIsEdit(true);
     setEditId(sirket.id);
   };
@@ -96,7 +110,7 @@ const Antrepolar = () => {
         {sirketData.map((sirket, index) => (
           <div
             key={index}
-            className="p-2 border flex flex-col gap-2 justify-center items-center rounded bg-white  duration-300"
+            className="p-2 border flex flex-col gap-2 justify-center items-center rounded bg-white duration-300"
           >
             <p className="text-center text-blue-600 font-semibold text-lg">
               {sirket.sehir}
@@ -104,6 +118,7 @@ const Antrepolar = () => {
             <p className="text-xs border-black/20 w-full text-center p-2 border rounded text-black">
               {sirket.metin}
             </p>
+            {sirket.logo && <img src={sirket.logo} className="h-full w-full" />}
             <div className="flex gap-2 mt-2">
               <button
                 className="bg-blue-500 text-white px-3 py-1 rounded"
@@ -144,6 +159,12 @@ const Antrepolar = () => {
               placeholder="Metin"
               value={metin}
               onChange={(e) => setMetin(e.target.value)}
+              className="p-2 border rounded"
+            />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setLogo(e.target.files[0])}
               className="p-2 border rounded"
             />
             <button

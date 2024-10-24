@@ -10,12 +10,16 @@ import Cookies from "js-cookie";
 import { Pencil } from "lucide-react";
 import iller from "../helpers/il.json";
 import Guncelle from "../modals/ilan/Guncelle";
+import { Link } from "react-router-dom";
 
 const Ilanlar = () => {
   const [ilanData, setIlanData] = useState([]);
   const [ilanGuncelle, setIlanGuncelle] = useState(false);
   const [ilanId, setIlanId] = useState("");
   const [selectedSehir, setSelectedSehir] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
 
   const illerListesi = Object.entries(iller).map(([key, value]) => ({
     id: key,
@@ -53,6 +57,8 @@ const Ilanlar = () => {
     ilanCek();
   }, []);
 
+  
+
   const onClose = () => {
     setIlanGuncelle(false);
     setIlanId("");
@@ -64,7 +70,15 @@ const Ilanlar = () => {
   };
 
   const filteredIlanlar = ilanData.filter((ilan) =>
-    selectedSehir ? ilan.bulunduguIl === selectedSehir : true
+    (selectedSehir ? ilan.bulunduguIl === selectedSehir : true) &&
+    (searchTerm ? ilan.esya.toLowerCase().includes(searchTerm.toLowerCase()) : true)
+  );
+
+  const totalPages = Math.ceil(filteredIlanlar.length / itemsPerPage);
+
+  const currentIlanlar = filteredIlanlar.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   );
 
   return (
@@ -72,7 +86,13 @@ const Ilanlar = () => {
       <Header />
       <div className="container mx-auto max-w-screen-xl flex flex-col gap-5 py-5">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold">Onaylı İlanlar</h2>
+        <input
+            type="text"
+            placeholder="İlan ara..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="p-2 border rounded-md"
+          />
           <select
             className="p-2 border rounded-md"
             value={selectedSehir}
@@ -87,10 +107,10 @@ const Ilanlar = () => {
           </select>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {filteredIlanlar.length > 0 ? (
-            filteredIlanlar.map((ilan, ilanIndex) => (
+          {currentIlanlar.length > 0 ? (
+            currentIlanlar.map((ilan) => (
               <IlanItem
-                key={ilanIndex}
+                key={ilan.id}
                 ilan={ilan}
                 ilanGuncelleModal={handleIlanGuncelle}
               />
@@ -98,6 +118,26 @@ const Ilanlar = () => {
           ) : (
             <p className="text-center text-gray-600">Henüz onaylı ilan yok.</p>
           )}
+        </div>
+
+        <div className="flex justify-between mt-4 px-2 md:px-0">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="p-2 bg-gray-300 rounded disabled:opacity-50"
+          >
+            Önceki
+          </button>
+          <span>
+            Sayfa {currentPage} / {totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className="p-2 bg-gray-300 rounded disabled:opacity-50"
+          >
+            Sonraki
+          </button>
         </div>
       </div>
       {ilanGuncelle && <Guncelle ilanID={ilanId} onClose={onClose} />}
@@ -136,57 +176,47 @@ const IlanItem = ({ ilan, ilanGuncelleModal }) => {
   const scrollNext = () => embla && embla.scrollNext();
 
   return (
-    <div className="border items-center flex flex-col gap-5 rounded-lg shadow-lg bg-white p-4">
+    <div className="border items-center flex flex-row gap-5 rounded-lg shadow-lg bg-white p-4">
       {ilan.images && ilan.images.length > 0 && (
-        <div className="w-full">
-          <div className="mb-3">
-            <img
-              src={ilan.images[0]}
-              alt="Kapak Görseli"
-              className="rounded border mx-auto cursor-pointer w-auto h-52 object-cover"
-              onClick={() => openModal(ilan.images[0])}
-            />
-          </div>
-
-          {ilan.images.length > 1 && (
-            <div className="mt-2 relative">
-              <div className="overflow-hidden" ref={viewportRef}>
-                <div className="flex gap-2 items-center justify-start">
-                  {ilan.images.slice(1).map((image, index) => (
-                    <div
-                      key={index}
-                      className="min-w-[100px] mx-auto relative h-[100px]"
-                    >
-                      <img
-                        src={image}
-                        alt={`İlan Görseli ${index + 1}`}
-                        className="rounded mx-auto cursor-pointer w-full h-full object-cover"
-                        onClick={() => openModal(image)}
-                      />
-                    </div>
-                  ))}
-                </div>
+        <div className="w-1/2">
+          <div className="mt-2 relative">
+            <div className="overflow-hidden" ref={viewportRef}>
+              <div className="flex gap-2 items-center justify-start">
+                {ilan.images.slice(1).map((image, index) => (
+                  <div
+                    key={index}
+                    className="max-w-[200px] mx-auto relative max-h-[700px]"
+                  >
+                    <img
+                      src={image}
+                      alt={`İlan Görseli ${index + 1}`}
+                      className="rounded min-w-[100px] mx-auto cursor-pointer w-full h-full object-cover"
+                      onClick={() => openModal(image)}
+                    />
+                  </div>
+                ))}
               </div>
-
-              <button
-                className={`absolute top-1/2 left-0 transform -translate-y-1/2 p-2 bg-gray-800 text-white rounded-full ${
-                  !prevBtnEnabled ? "opacity-50" : ""
-                }`}
-                onClick={scrollPrev}
-              >
-                ‹
-              </button>
-              <button
-                className={`absolute top-1/2 right-0 transform -translate-y-1/2 p-2 bg-gray-800 text-white rounded-full ${
-                  !nextBtnEnabled ? "opacity-50" : ""
-                }`}
-                onClick={scrollNext}
-                disabled={!nextBtnEnabled}
-              >
-                ›
-              </button>
             </div>
-          )}
+
+            <button
+              className={`absolute top-1/2 left-0 transform -translate-y-1/2 p-2 bg-gray-800 text-white rounded-full ${
+                !prevBtnEnabled ? "opacity-50" : ""
+              }`}
+              onClick={scrollPrev}
+              disabled={!prevBtnEnabled}
+            >
+              ‹
+            </button>
+            <button
+              className={`absolute top-1/2 right-0 transform -translate-y-1/2 p-2 bg-gray-800 text-white rounded-full ${
+                !nextBtnEnabled ? "opacity-50" : ""
+              }`}
+              onClick={scrollNext}
+              disabled={!nextBtnEnabled}
+            >
+              ›
+            </button>
+          </div>
         </div>
       )}
 
@@ -211,9 +241,9 @@ const IlanItem = ({ ilan, ilanGuncelleModal }) => {
         </div>
       </ReactModal>
 
-      <div className="flex-grow relative">
+      <div className="flex-grow flex-1 relative">
         <h3 className="text-xl font-bold text-gray-800 pt-10 md:pt-0">
-          {ilan.unvan}
+          {ilan.esya}
         </h3>
         {userUID === ilan.userUID && (
           <Pencil
@@ -221,57 +251,15 @@ const IlanItem = ({ ilan, ilanGuncelleModal }) => {
             className="absolute right-0 cursor-pointer hover:bg-lime-500 duration-500 p-2 size-9 bg-black text-white rounded-xl top-10"
           />
         )}
-        <p className="text-xs absolute right-28 top-0 font-semibold bg-sky-200 p-1 rounded text-gray-700">
+        <p className="text-xs absolute right-0 top-0 font-semibold bg-sky-200 p-1 rounded text-gray-700">
           {ilan.creationDate}
         </p>
-        <p className="text-xs absolute right-0 top-0 font-semibold bg-lime-200 p-1 rounded text-gray-700">
-          {ilan.ilanNo}
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mt-3">
-          <p className="text-md font-semibold text-gray-700">
-            İletişim <br />
-            <span className="font-normal">
-              {userUID ? ilan.iletisim : "Giriş yapınız"}
-            </span>
-          </p>
-          <p className="text-md font-semibold text-gray-700">
-            Eşya <br /> <span className="font-normal">{ilan.esya}</span>
-          </p>
-          <p className="text-md font-semibold text-gray-700">
-            Mevcut Miktar <br />
-            <span className="font-normal">{ilan.mevcutMiktar}</span>
-          </p>
-          <p className="text-md font-semibold text-gray-700">
-            Fiyat <br />
-            <span className="font-normal">
-              {ilan.miktarFiyati} {ilan.paraBirimi} <br />
-              <span className="text-xs">{ilan.miktarBirimi}</span>
-            </span>
-          </p>
-          <p className="text-md font-semibold text-gray-700">
-            Gümrüklü Mü <br />
-            <span className="font-normal">
-              {ilan.gumruklu ? "Evet" : "Hayır"}
-            </span>
-          </p>
-          <p className="text-md font-semibold text-gray-700">
-            Bulunduğu Yer <br />
-            <span className="font-normal">{ilan.bulunduguYer}</span>
-          </p>
+        <div className="grid grid-cols-1 gap-3 mt-3">
           <p className="text-md font-semibold text-gray-700">
             Bulunduğu İl <br />
             <span className="font-normal">{ilan.bulunduguIl}</span>
           </p>
-          <p className="text-md font-semibold text-gray-700">
-            Menşe Ülke <br />
-            <span className="font-normal">{ilan.menseUlke}</span>
-          </p>
-          <p className="text-md col-span-2 xl:col-span-4 overflow-y-auto font-semibold text-gray-700">
-            Açıklama <br />
-            <span className="font-normal break-words max-h-32 overflow-y-auto">
-              {ilan.ozellikler}
-            </span>{" "}
-          </p>
+          <Link to={`/ilan/${ilan.id}`} className="w-1/2 text-center py-1 bg-lime-400 rounded-xl ml-auto hover:underline">Detay</Link>
         </div>
       </div>
     </div>

@@ -6,6 +6,7 @@ import {
   ListCheck,
   Pencil,
   Settings,
+  Users,
 } from "lucide-react";
 import React, { useState } from "react";
 import OnayBekleyenler from "./components/OnayBekleyenler";
@@ -19,6 +20,7 @@ import Antrepolar from "./components/Antrepolar";
 import Gumruk from "./components/Gumruk";
 import TumIlanlar from "./components/TumIlanlar";
 import YasalMetinler from "./components/YasalMetinler";
+import Kullanicilar from "./components/TumKullanicilar";
 
 const Sidebar = () => {
   const [aktifComp, setAktifComp] = useState(0);
@@ -35,6 +37,14 @@ const Sidebar = () => {
             }  flex gap-2 py-3 rounded-l-full items-center justify-center`}
           >
             Onay Bekleyen İlanlar <ListCheck />
+          </button>
+          <button
+            onClick={() => setAktifComp(11)}
+            className={`w-full bg-white hover:ring ring-sky-500 duration-300 text-black ${
+              aktifComp === 11 ? "border-r-8 border-sky-400" : ""
+            }  flex gap-2 py-3 rounded-l-full items-center justify-center`}
+          >
+            Kullanıcılar <Users />
           </button>
           <button
             onClick={() => setAktifComp(9)}
@@ -130,6 +140,7 @@ const Sidebar = () => {
         {aktifComp === 8 && <Acenteler />}
         {aktifComp === 9 && <TumIlanlar />}
         {aktifComp === 10 && <YasalMetinler />}
+        {aktifComp === 11 && <Kullanicilar />}
       </div>
     </div>
   );

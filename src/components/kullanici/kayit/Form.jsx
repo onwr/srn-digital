@@ -93,6 +93,7 @@ const Form = () => {
           <div className="flex flex-col items-center justify-center md:grid  md:grid-cols-2 gap-2 w-full max-w-xl">
             <input
               type="text"
+              required
               value={kulAd}
               onChange={(e) => setKulAd(e.target.value)}
               autoFocus
@@ -101,6 +102,7 @@ const Form = () => {
             />
             <input
               type="password"
+              required
               value={sifre}
               onChange={(e) => setSifre(e.target.value)}
               className="p-2 max-w-xs text-center duration-300 outline-none focus:ring-1 ring-lime-300 w-full border rounded-md"
@@ -109,6 +111,7 @@ const Form = () => {
             <input
               type="tel"
               value={telefon}
+              required
               maxLength={14}
               onChange={handlePhoneChange}
               className="p-2 max-w-xs text-center duration-300 outline-none focus:ring-1 ring-lime-300 w-full border rounded-md"
@@ -117,6 +120,7 @@ const Form = () => {
             <input
               type="email"
               value={posta}
+              required
               onChange={(e) => setPosta(e.target.value)}
               autoFocus
               className="p-2 max-w-xs text-center duration-300 outline-none focus:ring-1 ring-lime-300 w-full border rounded-md"
@@ -126,6 +130,7 @@ const Form = () => {
             <input
               type="text"
               value={unvan}
+              required
               onChange={(e) => setUnvan(e.target.value)}
               autoFocus
               className="p-2 max-w-xs text-center duration-300 outline-none focus:ring-1 ring-lime-300 w-full border rounded-md"
@@ -133,6 +138,7 @@ const Form = () => {
             />
             <input
               type="text"
+              required
               value={vkn}
               onChange={(e) => setVkn(e.target.value)}
               autoFocus
@@ -141,6 +147,7 @@ const Form = () => {
             />
             <input
               type="email"
+              required
               value={fPosta}
               onChange={(e) => setFPosta(e.target.value)}
               className="p-2 max-w-xs md:max-w-none text-center col-span-2 duration-300 outline-none focus:ring-1 ring-lime-300 w-full border rounded-md"
@@ -148,6 +155,7 @@ const Form = () => {
             />
             <textarea
               type="text"
+              required
               value={faturaBilgi}
               onChange={(e) => setFBilgi(e.target.value)}
               className="p-2 max-w-xs md:max-w-none col-span-2 min-h-10 max-h-32 text-center outline-none focus:ring-1 ring-lime-300 w-full border rounded-md"
